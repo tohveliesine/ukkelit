@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\common\Action.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\ActionEffect.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\ActionRequest.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\GameState.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\Hero.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\Player.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui_console\entry.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui_console\Main.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\common\Action.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\ActionEffect.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\ActionRequest.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\ActionType.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\GameState.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\Hero.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\Player.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui_console\Main.h">
+      <Filter>ui_console</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="client">
+      <UniqueIdentifier>{e9b366bf-8bc5-4a88-8e30-7e82b1c22246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{96ae1fb9-dde3-45ba-80c8-1acdeb87855b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{47743292-a113-4f42-8de0-3dcf9a2dca2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="server">
+      <UniqueIdentifier>{273f566a-7401-4476-8af1-6f5451e759e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui_console">
+      <UniqueIdentifier>{aafc56d5-44d1-436b-a41e-3a3c9a15a227}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
