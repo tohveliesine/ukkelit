@@ -1,8 +1,8 @@
 #include "Player.h"
 #include "ActionRequest.h"
 
-Player::Player(const std::wstring& name)
-	: _name(name)
+Player::Player()
+	: _name(L"unnamed")
 {
 }
 

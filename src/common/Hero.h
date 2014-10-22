@@ -1,7 +1,8 @@
 #pragma once
 
 #include "ActionRequest.h"
-#include "ActionEffect.h"
+
+class ActionEffect;
 
 class Hero
 {
@@ -13,6 +14,8 @@ public:
 	int healthpoints() const { return _healthpoints; }
 	int defense() const { return _defense; }
 	int stamina() const { return _stamina; }
+
+	bool is_alive() const { return _healthpoints > 0; }
 
 	Hero();
 	~Hero();

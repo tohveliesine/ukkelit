@@ -1,0 +1,1 @@
+const char* UKKELIT_VERSION = "0.1";

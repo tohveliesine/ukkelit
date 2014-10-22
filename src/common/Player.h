@@ -1,8 +1,9 @@
 #pragma once
 
 #include <string>
-#include "ActionRequest.h"
 #include "Hero.h"
+
+class ActionRequest;
 
 class Player
 {
@@ -11,11 +12,12 @@ class Player
 
 public:
 	const std::wstring& name() const { return _name; }
+	void name(const std::wstring& name) { _name = name; }
 
 	const Hero& hero() const { return _hero; }
 	Hero& hero() { return _hero; }
 
-	Player(const std::wstring& name);
+	Player();
 	~Player();
 
 	void quitRequest(ActionRequest& request) const;

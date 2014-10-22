@@ -28,6 +28,7 @@
     <ClInclude Include="src\common\GameState.h" />
     <ClInclude Include="src\common\Hero.h" />
     <ClInclude Include="src\common\Player.h" />
+    <ClInclude Include="src\common\_ver.h" />
     <ClInclude Include="src\ui_console\Main.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
