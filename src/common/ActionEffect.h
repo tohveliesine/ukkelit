@@ -2,63 +2,39 @@
 #include <cmath>
 #include <cassert>
 
-#include "Hero.h"
+class Player;
 
-class ActionEffect
-{
-	int _total_damage;
-	int _effect_on_healthpoints;
-	int _effect_on_defense;
-	int _effect_on_stamina;
 
-public:
-	int effect_on_healthpoints() const { return _effect_on_healthpoints; }
-	void effect_on_healthpoints(int healthpoints) { _effect_on_healthpoints += healthpoints; }
+class ActionEffect {
+	public:
+	typedef int Points;
 
-	int effect_on_defense() const { return _effect_on_defense; }
-	void effect_on_defense(int defense) { _effect_on_defense += defense; }
+	private:
+	Points _total_damage;
+	Points _effect_on_healthpoints;
+	Points _effect_on_defense;
+	Points _effect_on_stamina;
 
-	int effect_on_stamina() const { return _effect_on_stamina; }
-	void effect_on_stamina(int stamina) { _effect_on_stamina += stamina; }
+	public:
+	Points effect_on_healthpoints() const { return _effect_on_healthpoints; }
+	void effect_on_healthpoints(Points healthpoints) { _effect_on_healthpoints += healthpoints; }
 
-	int total_damage() const { return _total_damage; }
+	Points effect_on_defense() const { return _effect_on_defense; }
+	void effect_on_defense(Points defense) { _effect_on_defense += defense; }
 
-	void deal_damage(int damage, const Hero& target) {
-		assert(damage >= 0);
+	Points effect_on_stamina() const { return _effect_on_stamina; }
+	void effect_on_stamina(Points stamina) { _effect_on_stamina += stamina; }
 
-		_total_damage += damage;
+	Points total_damage() const { return _total_damage; }
 
-		// Case 1: Target has more than enough defense to absorb the damage
-		//   Damage   Target             Effect
-		//     6      hp 20, def 10      def -6, hp 0
-		// Case 2: Target has just enough defense to absorb the damage
-		//   Damage   Target             Effect
-		//     6      hp 20, def 6       def -6, hp 0
-		// Case 3: Target does not have enough defense to absorb the damage
-		//   Damage   Target             Effect
-		//     6      hp 20, def 5       def -5, hp -1
-		// Case 4: Target does has 0 defense, cannot absorb any damage
-		//   Damage   Target             Effect
-		//     6      hp 20, def 0       def 0, hp -6
-
-		int effectiveDefense = target.defense() - effect_on_defense();
-		if (effectiveDefense >= damage) {
-			// case 1 & 2
-			effect_on_defense(-damage);
-		}
-		else if (effectiveDefense == 0) {
-			// case 4
-			effect_on_healthpoints(-damage);
-		}
-		else {
-			// case 3
-			int damageLeft = damage - effectiveDefense;
-			effect_on_defense(-effectiveDefense);
-			effect_on_healthpoints(-damageLeft);
-		}
+	bool empty() const {
+		return effect_on_healthpoints() == 0
+			&& effect_on_defense() == 0
+			&& effect_on_stamina() == 0;
 	}
+
+	void deal_damage(Points damage, const Player& target);
 
 	ActionEffect();
 	~ActionEffect();
 };
-

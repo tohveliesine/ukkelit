@@ -1,0 +1,10 @@
+BasedOnStyle: LLVM
+PointerAlignment: Left
+
+AccessModifierOffset: 0
+IndentWidth: 8
+TabWidth: 8
+UseTab: ForIndentation
+AllowShortIfStatementsOnASingleLine: false
+IndentCaseLabels: false
+ColumnLimit: 120

@@ -11,25 +11,40 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\common\Action.cpp" />
     <ClCompile Include="src\common\ActionEffect.cpp" />
-    <ClCompile Include="src\common\ActionRequest.cpp" />
-    <ClCompile Include="src\common\GameState.cpp" />
-    <ClCompile Include="src\common\Hero.cpp" />
     <ClCompile Include="src\common\Player.cpp" />
+    <ClCompile Include="src\common\ServerCommunication.cpp" />
+    <ClCompile Include="src\game\GameLogic.cpp" />
+    <ClCompile Include="src\server\ClientCommunication.cpp" />
+    <ClCompile Include="src\ui_console\ConnectRandomGameUi.cpp" />
     <ClCompile Include="src\ui_console\entry.cpp" />
+    <ClCompile Include="src\ui_console\FirstTimeUi.cpp" />
+    <ClCompile Include="src\ui_console\GameUi.cpp" />
+    <ClCompile Include="src\ui_console\HelpUi.cpp" />
     <ClCompile Include="src\ui_console\Main.cpp" />
+    <ClCompile Include="src\ui_console\MainMenuUi.cpp" />
+    <ClCompile Include="src\ui_console\StartupUi.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\common\Action.h" />
+    <ClInclude Include="src\client\ClientState.h" />
+    <ClInclude Include="src\common\Ability.h" />
     <ClInclude Include="src\common\ActionEffect.h" />
-    <ClInclude Include="src\common\ActionRequest.h" />
-    <ClInclude Include="src\common\ActionType.h" />
+    <ClInclude Include="src\common\ClientMessages.h" />
+    <ClInclude Include="src\common\CommonTypes.h" />
     <ClInclude Include="src\common\GameState.h" />
-    <ClInclude Include="src\common\Hero.h" />
+    <ClInclude Include="src\common\MockNetwork.h" />
     <ClInclude Include="src\common\Player.h" />
+    <ClInclude Include="src\common\ServerCommunication.h" />
+    <ClInclude Include="src\common\ServerMessages.h" />
     <ClInclude Include="src\common\_ver.h" />
+    <ClInclude Include="src\game\GameLogic.h" />
+    <ClInclude Include="src\server\ClientCommunication.h" />
+    <ClInclude Include="src\server\ServerState.h" />
     <ClInclude Include="src\ui_console\Main.h" />
+    <ClInclude Include="src\ui_console\UserInterface.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include=".clang-format" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{878C261C-4CC9-4D8B-BDFA-FFEEAE1BF93F}</ProjectGuid>
@@ -75,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnablePREfast>false</EnablePREfast>
-      <AdditionalIncludeDirectories>C:\Program Files\boost\boost_1_56_0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\boost\boost_1_56_0;C:\Program Files (x86)\Visual Leak Detector\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

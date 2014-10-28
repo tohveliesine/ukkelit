@@ -1,10 +1,8 @@
 #pragma once
-class Main
-{
-public:
+class Main {
+      public:
 	Main();
 	~Main();
 
 	void run();
 };
-

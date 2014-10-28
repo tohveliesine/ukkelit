@@ -1,58 +1,62 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <boost/date_time.hpp>
-#include <cassert>
+#include "../common/CommonTypes.h"
+#include "../common/Player.h"
 
-#include "Player.h"
-#include "Action.h"
-
-class GameState
-{
+class GameState {
 	Player _player_a;
 	Player _player_b;
 
-	Player* _active_player;
-
-	bool _has_ended = false;
-	boost::posix_time::ptime _start_time;
-
 	int _turn_counter;
+	PlayerId _player_whose_turn_it_is;
 
-public:
-	Player& player_a() { return _player_a; }
+	public:
+	GameState() : _turn_counter(0) {
+	}
+
 	const Player& player_a() const { return _player_a; }
+	Player& player_a() { return _player_a; }
 
-	Player& player_b() { return _player_b; }
 	const Player& player_b() const { return _player_b; }
-
-	Player* active_player() { return _active_player; }
-	const Player* active_player() const { return _active_player; }
-
-	void active_player(Player* player) {
-		assert(player == &_player_a || player == &_player_b);
-
-		_active_player = player;
-	}
-
-	Player* target_player() { return _active_player == &_player_a ? &_player_b : &_player_a; }
-	const Player* target_player() const { return _active_player == &_player_a ? &_player_b : &_player_a; }
-
-	bool has_ended() const { return _has_ended; }
-
-	const boost::posix_time::ptime& start_time() const { return _start_time; }
-
-	void next_turn() {
-		active_player(target_player());
-		++_turn_counter;
-	}
+	Player& player_b() { return _player_b; }
 
 	int turn_counter() const { return _turn_counter; }
+	void turn_counter(int turn_counter) { _turn_counter = turn_counter; }
 
-	GameState();
-	~GameState();
+	Player& player_turn() {
+		if (player_a().player_id() == _player_whose_turn_it_is) {
+			return player_a();
+		} else {
+			return player_b();
+		}
+	}
+	const Player& player_turn() const {
+		if (player_a().player_id() == _player_whose_turn_it_is) {
+			return player_a();
+		} else {
+			return player_b();
+		}
+	}
+	void player_turn(PlayerId player_id) { _player_whose_turn_it_is = player_id; }
 
-	void apply(const Action& action);
+	Player& player_waiting() {
+		if (player_a().player_id() == _player_whose_turn_it_is) {
+			return player_b();
+		} else {
+			return player_a();
+		}
+	}
+	const Player& player_waiting() const {
+		if (player_a().player_id() == _player_whose_turn_it_is) {
+			return player_b();
+		} else {
+			return player_a();
+		}
+	}
+
+	void reset() { _turn_counter = 0; }
+	void next_turn() {
+		++_turn_counter;
+		player_turn(player_waiting().player_id());
+	}
 };
-

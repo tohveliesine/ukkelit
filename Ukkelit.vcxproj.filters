@@ -1,19 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\common\Action.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
     <ClCompile Include="src\common\ActionEffect.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
-    <ClCompile Include="src\common\ActionRequest.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
-    <ClCompile Include="src\common\GameState.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
-    <ClCompile Include="src\common\Hero.cpp">
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="src\common\Player.cpp">
@@ -25,24 +13,36 @@
     <ClCompile Include="src\ui_console\Main.cpp">
       <Filter>ui_console</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui_console\ConnectRandomGameUi.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui_console\FirstTimeUi.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui_console\HelpUi.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui_console\MainMenuUi.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui_console\StartupUi.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui_console\GameUi.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\ServerCommunication.cpp">
+      <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server\ClientCommunication.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\GameLogic.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\common\Action.h">
-      <Filter>common</Filter>
-    </ClInclude>
     <ClInclude Include="src\common\ActionEffect.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="src\common\ActionRequest.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="src\common\ActionType.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="src\common\GameState.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="src\common\Hero.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="src\common\Player.h">
@@ -52,6 +52,42 @@
       <Filter>ui_console</Filter>
     </ClInclude>
     <ClInclude Include="src\common\_ver.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\ClientState.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui_console\UserInterface.h">
+      <Filter>ui_console</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\Ability.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\ClientMessages.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\ServerMessages.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\ServerCommunication.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\server\ClientCommunication.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\MockNetwork.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\GameLogic.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\server\ServerState.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\GameState.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\CommonTypes.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,5 +107,8 @@
     <Filter Include="ui_console">
       <UniqueIdentifier>{aafc56d5-44d1-436b-a41e-3a3c9a15a227}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include=".clang-format" />
   </ItemGroup>
 </Project>
