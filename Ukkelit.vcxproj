@@ -14,6 +14,7 @@
     <ClCompile Include="src\common\ActionEffect.cpp" />
     <ClCompile Include="src\common\Player.cpp" />
     <ClCompile Include="src\common\ServerCommunication.cpp" />
+    <ClCompile Include="src\common\Translations.cpp" />
     <ClCompile Include="src\game\GameLogic.cpp" />
     <ClCompile Include="src\server\ClientCommunication.cpp" />
     <ClCompile Include="src\ui_console\ConnectRandomGameUi.cpp" />
@@ -36,6 +37,7 @@
     <ClInclude Include="src\common\Player.h" />
     <ClInclude Include="src\common\ServerCommunication.h" />
     <ClInclude Include="src\common\ServerMessages.h" />
+    <ClInclude Include="src\common\Translations.h" />
     <ClInclude Include="src\common\_ver.h" />
     <ClInclude Include="src\game\GameLogic.h" />
     <ClInclude Include="src\server\ClientCommunication.h" />

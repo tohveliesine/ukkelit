@@ -7,6 +7,7 @@
 
 #include "../client/ClientState.h"
 #include "../common/ServerCommunication.h"
+#include "../common/Translations.h"
 
 class UserInterface {
 	private:

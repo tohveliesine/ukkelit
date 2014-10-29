@@ -8,9 +8,9 @@
 std::unique_ptr<UserInterface> StartupUi::run_ui() {
 	assert(out() != nullptr);
 
-	*out() << "Ukkelit v" << UKKELIT_VERSION << std::endl;
+	*out() << t("Startup_Name", UKKELIT_VERSION) << std::endl;
 	*out() << std::endl;
-	*out() << "A 1 vs 1 strategic hero combat game." << std::endl;
+	*out() << t("Startup_Intro") << std::endl;
 
 	return std::unique_ptr<UserInterface>(new FirstTimeUi());
 }

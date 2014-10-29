@@ -40,6 +40,9 @@
     <ClCompile Include="src\game\GameLogic.cpp">
       <Filter>game</Filter>
     </ClCompile>
+    <ClCompile Include="src\common\Translations.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\ActionEffect.h">
@@ -88,6 +91,9 @@
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="src\common\CommonTypes.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\Translations.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
