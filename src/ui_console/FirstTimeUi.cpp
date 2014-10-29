@@ -10,21 +10,20 @@ std::unique_ptr<UserInterface> FirstTimeUi::run_ui() {
 
 	std::cout << std::endl;
 	std::cout << std::endl;
-	*out() << "Since this is your first time playing, state your alias, please:" << std::endl;
+	*out() << t("FirstTime_AliasQuestion") << std::endl;
 
 	while (clientstate()->alias_name().empty()) {
 		std::string name(prompt("anonymous coward"));
 
 		if (name.length() > 16) {
-			*out() << "Please use at most 16 characters in your name." << std::endl;
+			*out() << t("FirstTime_Error_NameTooLong", 16) << std::endl;
 		} else {
 			clientstate()->alias_name(name);
 		}
 	}
 
 	*out() << std::endl;
-	*out() << "Welcome to the game, " << clientstate()->alias_name() << "! You may find it easiest to learn"
-	       << std::endl << "the game by simply joining a random game.";
+	*out() << t("FirstTime_Welcome", clientstate()->alias_name());
 
 	return std::unique_ptr<UserInterface>(new MainMenuUi());
 }

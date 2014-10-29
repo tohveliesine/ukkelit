@@ -17,7 +17,7 @@ std::unique_ptr<UserInterface> ConnectRandomGameUi::run_ui() {
 	clientstate()->gamestate(gamestate);
 	gamestate->self().name(clientstate()->alias_name());
 
-	*out() << "Connecting... OK!" << std::endl;
+	*out() << t("ConnectRandomGame_Connecting") << std::endl;
 
 	return std::unique_ptr<UserInterface>(new GameUi());
 }

@@ -25,7 +25,7 @@ std::unique_ptr<UserInterface> GameUi::run_ui() {
 
 		// there should always be messages!
 		if (count == 0) {
-			*out() << "Warning: No more messages to process." << std::endl;
+			*out() << t("Game_Warning_NoMessages") << std::endl;
 			break;
 		}
 	}
@@ -34,32 +34,20 @@ std::unique_ptr<UserInterface> GameUi::run_ui() {
 }
 
 void GameUi::visit(const JoinedRandomGameQueueMessage& message) {
-	*out() << "You are in the queue for a random game." << std::endl;
+	*out() << t("Game_Queued") << std::endl;
 
 	clientstate()->gamestate()->session_id(message.session_id);
 	clientstate()->gamestate()->self().player_id(message.player_id);
 }
-void print_quick_help(std::ostream& out) {
-	out << "\r\n\
-        Quick guide - While you wait for the game to start\r\n\
-\r\n\
-                    hitpoints        stamina\r\n\
-      Deprive the opponent   \\       /   Reduced by actions,\r\n\
-	      to win the game.  (20, 0, 10)  regenerates by +3 every turn.\r\n\
-                                 /\r\n\
-                              defense\r\n\
-                         Shields you from attacks,\r\n\
-                         protecting your hitpoints.\r\n\
-" << std::endl;
-}
+void print_quick_help(std::ostream& out) { out << std::endl << t("Game_QuickGuide") << std::endl; }
 void GameUi::visit(const RandomGameFoundMessage& message) {
-	*out() << "Found someone to play with!" << std::endl;
+	*out() << t("Game_Queue_GameFound") << std::endl;
 
 	// print out quick help
 	print_quick_help(*out());
 }
 void GameUi::visit(const GameStartedMessage& message) {
-	*out() << "Game starting..." << std::endl;
+	*out() << t("Game_Starting") << std::endl;
 
 	const Player* self;
 	const Player* opponent;
@@ -75,10 +63,11 @@ void GameUi::visit(const GameStartedMessage& message) {
 	clientstate()->gamestate()->opponent() = *opponent;
 }
 void GameUi::visit(const GameEndedMessage& message) {
-	Player &winner(clientstate()->gamestate()->player_a().player_id() == message.winner_player_id
-		? clientstate()->gamestate()->player_a() : clientstate()->gamestate()->player_b());
+	Player& winner(clientstate()->gamestate()->player_a().player_id() == message.winner_player_id
+	                   ? clientstate()->gamestate()->player_a()
+	                   : clientstate()->gamestate()->player_b());
 
-	*out() << "    >> Game ended. Winner is " << winner.name() << " <<" << std::endl;
+	*out() << t("Game_Ended", winner.name()) << std::endl;
 }
 
 static enum ActionChoice {
@@ -93,14 +82,15 @@ static std::map<std::string, ActionChoice> ActionChoiceMap = {
     {"defend", GAMEUI_ACTIONCHOICE_DEFEND},
     {"nothing", GAMEUI_ACTIONCHOICE_NOTHING},
     {"forfeit", GAMEUI_ACTIONCHOICE_FORFEIT},
+    {"quit", GAMEUI_ACTIONCHOICE_FORFEIT},
 };
 
 static ActionChoice get_action_choice(std::ostream& out, std::istream& in) {
-	out << "    Your choices are to /attack/, /defend/ or do /nothing/." << std::endl;
+	out << t("Game_Choices") << std::endl;
 
 	bool first_time = true;
 	while (true) {
-		out << "    ?> ";
+		out << t("Game_Prompt");
 
 		std::string command;
 		std::getline(in, command);
@@ -110,12 +100,7 @@ static ActionChoice get_action_choice(std::ostream& out, std::istream& in) {
 		}
 
 		if (first_time) {
-			out << std::endl;
-			out << "    /attack/ costs -4 sta, but deals +5 damage." << std::endl;
-			out << "    /defend/ costs -2 sta, but gives +3 defense." << std::endl;
-			out << "    do /nothing/ if you have not enough stamina and wish to "
-			       "    regenerate." << std::endl;
-			out << "    You may also /forfeit/ if you feel like a loser." << std::endl;
+			out << std::endl << t("Game_ChoicesHelp") << std::endl;
 
 			first_time = false;
 		}
@@ -123,7 +108,7 @@ static ActionChoice get_action_choice(std::ostream& out, std::istream& in) {
 }
 
 void GameUi::action() {
-	*out() << "    It is your turn. What will you do?" << std::endl;
+	*out() << t("Game_TurnHint_You") << std::endl;
 
 	ActionChoice choice = get_action_choice(*out(), *in());
 
@@ -161,10 +146,11 @@ void GameUi::visit(const TurnChangedMessage& message) {
 	clientstate()->gamestate()->turn_counter(message.turn_number);
 	clientstate()->gamestate()->player_turn().apply(message.effect_on_player);
 
+	int sta_gained = message.effect_on_player.effect_on_stamina();
 	if (clientstate()->gamestate()->is_self_turn()) {
-		*out() << "    Your stamina regenerates, and you gain +1 stamina." << std::endl;
+		*out() << t("Game_StaminaRegeneration_You", sta_gained) << std::endl;
 	} else {
-		*out() << "    " << clientstate()->gamestate()->opponent().name() << "'s stamina regenerates, and she gains +1 stamina." << std::endl;
+		*out() << t("Game_StaminaRegeneration_Opponent", clientstate()->gamestate()->opponent().name(), sta_gained) << std::endl;
 	}
 
 	print_status();
@@ -172,8 +158,7 @@ void GameUi::visit(const TurnChangedMessage& message) {
 	if (clientstate()->gamestate()->is_self_turn()) {
 		action();
 	} else {
-		*out() << "    It is now " << clientstate()->gamestate()->opponent().name() << "'s turn" << std::endl;
-		*out() << "    Wait for her action..." << std::endl;
+		*out() << t("Game_TurnHint_Opponent", clientstate()->gamestate()->opponent().name()) << std::endl;
 	}
 }
 
@@ -204,70 +189,62 @@ class SummaryFormatter {
 
 			if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_ATTACK) {
 				if (is_caster_self) {
-					sb << "    You want to attack, but fail to note that you have no stamina left." << std::endl;
+					sb << t("Ability_Attack_NoStamina_You") << std::endl;
 				} else {
-					sb << "    " << _opponent.name() << " wants to attack, but fails to note that she has no stamina left." << std::endl;
+					sb << t("Ability_Attack_NoStamina_Opponent", _opponent.name()) << std::endl;
 				}
 			} else if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_DEFEND) {
 				if (is_caster_self) {
-					sb << "    You want to take a defensive position, but fail to note that you have no stamina left." << std::endl;
+					sb << t("Ability_Defend_NoStamina_You") << std::endl;
 				} else {
-					sb << "    " << _opponent.name() << " wants to take a defensive position, but fails to note that she has no stamina left." << std::endl;
+					sb << t("Ability_Defend_NoStamina_Opponent", _opponent.name()) << std::endl;
 				}
 			}
 
 			if (is_caster_self) {
-				sb << "    You will have to wait until it regenerates next turn." << std::endl;
+				sb << t("Game_WaitUntilRegeneration_You") << std::endl;
 			} else {
-				sb << "    " << _opponent.name() << " will have to wait until it regenerates next turn." << std::endl;
+				sb << t("Game_WaitUntilRegeneration_Opponent", _opponent.name()) << std::endl;
 			}
 		} else {
 			if (message.action_request.action_type == PLAYERACTIONTYPE_ABILITY) {
 				if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_ATTACK) {
-					// You strike eräjorma with a sword,\r\ndealing 6 damage across her body.
-					// eräjorma strikes you with a sword,\r\ndealing 6 damage across you body.
-
 					if (is_caster_self) {
-						sb << "    >> You strike " << _opponent.name() << " with a sword," << std::endl;
-						sb << "       dealing " << message.effect_on_target.total_damage() << " damage across her body." << std::endl;
+						sb << "    >> " << t("Ability_Attack_Execute_You", _opponent.name(), message.effect_on_target.total_damage()) << std::endl;
 					} else {
-						sb << "    >> " << _opponent.name() << " strikes you with a sword," << std::endl;
-						sb << "       dealing " << message.effect_on_target.total_damage() << " damage across your body." << std::endl;
+						sb << "    >> " << t("Ability_Attack_Execute_Opponent", _opponent.name(), message.effect_on_target.total_damage()) << std::endl;
 					}
 				} else if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_DEFEND) {
-					// You get in a defensive position.
-					// eräjorma gets in a defensive position.
-
 					if (is_caster_self) {
-						sb << "    >> You get in a defensive position." << std::endl;
+						sb << "    >> " << t("Ability_Defend_Execute_You") << std::endl;
 					} else {
-						sb << "       " << _opponent.name() << " gets in a defensive position." << std::endl;
+						sb << "    >> " << t("Ability_Defend_Execute_Opponent", _opponent.name()) << std::endl;
 					}
 				} else {
-					sb << "    >> Some ability happens." << std::endl;
+					if (is_caster_self) {
+						sb << "    >> " << t("Ability_Generic_Execute_You") << std::endl;
+					} else {
+						sb << "    >> " << t("Ability_Generic_Execute_Opponent", _opponent.name()) << std::endl;
+					}
 				}
 			} else if (message.action_request.action_type == PLAYERACTIONTYPE_FORFEIT) {
-				// You decide to give up, like a coward.
-				// eräjorma decides to give up, like a coward.
-
 				if (is_caster_self) {
-					sb << "    >> You decide to give up, like a coward." << std::endl;
+					sb << "    >> " << t("Ability_Forfeit_Execute_You") << std::endl;
 				} else {
-					sb << "    >> " << _opponent.name() << " decides to give up, like a coward." << std::endl;
+					sb << "    >> " << t("Ability_Forfeit_Execute_Opponent", _opponent.name()) << std::endl;
 				}
 			} else if (message.action_request.action_type == PLAYERACTIONTYPE_IDLE) {
-				// You are unsure of your ability to do anything meaningful,\r\nand opt to do nothing.
-				// eräjorma is unsure of her ability to do anything meaningful,\r\nand opts to do nothing.
-
 				if (is_caster_self) {
-					sb << "    >> You are unsure of your ability to do anything meaningful," << std::endl;
-					sb << "       and opt to do nothing." << std::endl;
+					sb << "    >> " << t("Ability_Idle_Execute_You") << std::endl;
 				} else {
-					sb << "    >> " << _opponent.name() << " is unsure of her ability to do anything meaningful," << std::endl;
-					sb << "       and opts to do nothing." << std::endl;
+					sb << "    >> " << t("Ability_Idle_Execute_Opponent", _opponent.name()) << std::endl;
 				}
 			} else {
-				sb << "    >> Something happens." << std::endl;
+				if (is_caster_self) {
+					sb << "    >> " << t("Ability_Generic_Execute_You") << std::endl;
+				} else {
+					sb << "    >> " << t("Ability_Generic_Execute_Opponent", _opponent.name()) << std::endl;
+				}
 			}
 		}
 
@@ -280,9 +257,9 @@ class SummaryFormatter {
 
 		// Opponent loses -6 hitpoints.
 		// You lose -4 stamina.
-		
+
 		// You gain +4 defense, lose -2 stamina.
-		
+
 		// Opponent gains +4 defense, loses -2 stamina.
 
 		std::ostringstream sb;
@@ -307,7 +284,8 @@ class SummaryFormatter {
 
 		std::vector<std::string> effects;
 		if (effect.effect_on_healthpoints()) {
-			effects.push_back(stat_message(effect.effect_on_healthpoints(), gains, loses) + " healthpoints");
+			effects.push_back(stat_message(effect.effect_on_healthpoints(), gains, loses) +
+			                  " healthpoints");
 		}
 		if (effect.effect_on_defense()) {
 			effects.push_back(stat_message(effect.effect_on_defense(), gains, loses) + " defense");
@@ -321,7 +299,8 @@ class SummaryFormatter {
 		return sb.str();
 	}
 
-	static std::string stat_message(ActionEffect::Points value, const std::string& gains, const std::string& loses) {
+	static std::string stat_message(ActionEffect::Points value, const std::string& gains,
+	                                const std::string& loses) {
 		assert(value != 0);
 
 		std::ostringstream sb;
@@ -359,14 +338,7 @@ void GameUi::visit(const PlayerActionMessage& message) {
 std::string player_stats(const Player& player) {
 	// (20 hp, 0 def, 10 sta)
 
-	std::ostringstream os;
-	os << "(";
-	os << player.healthpoints() << " hp, ";
-	os << player.defense() << " def, ";
-	os << player.stamina() << " sta";
-	os << ")";
-
-	return os.str();
+	return t("Game_Stats_Display", player.healthpoints(), player.defense(), player.stamina());
 }
 
 void GameUi::print_status() {

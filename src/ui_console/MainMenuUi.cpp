@@ -22,7 +22,7 @@ std::unique_ptr<UserInterface> MainMenuUi::run_ui() {
 
 	std::cout << std::endl;
 	std::cout << std::endl;
-	*out() << "Do you want to find a /random/ game, /help/ or /quit/?" << std::endl;
+	*out() << t("MainMenu_QuickHelp") << std::endl;
 
 	// ask user what to do
 	Command command = COMMAND_UNKNOWN;
