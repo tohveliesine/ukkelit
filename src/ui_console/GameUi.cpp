@@ -10,7 +10,6 @@
 #include "../client/ClientState.h"
 
 std::unique_ptr<UserInterface> GameUi::run_ui() {
-	assert(out() != nullptr);
 	assert(clientstate()->gamestate() != nullptr);
 	assert(clientstate()->server_communication() != nullptr);
 
@@ -25,7 +24,7 @@ std::unique_ptr<UserInterface> GameUi::run_ui() {
 
 		// there should always be messages!
 		if (count == 0) {
-			*out() << t("Game_Warning_NoMessages") << std::endl;
+			co.write_line(t("Game_Warning_NoMessages"));
 			break;
 		}
 	}
@@ -34,20 +33,19 @@ std::unique_ptr<UserInterface> GameUi::run_ui() {
 }
 
 void GameUi::visit(const JoinedRandomGameQueueMessage& message) {
-	*out() << t("Game_Queued") << std::endl;
+	co.write_line(t("Game_Queued"));
 
 	clientstate()->gamestate()->session_id(message.session_id);
 	clientstate()->gamestate()->self().player_id(message.player_id);
 }
-void print_quick_help(std::ostream& out) { out << std::endl << t("Game_QuickGuide") << std::endl; }
 void GameUi::visit(const RandomGameFoundMessage& message) {
-	*out() << t("Game_Queue_GameFound") << std::endl;
+	co.write_line(t("Game_Queue_GameFound"));
 
 	// print out quick help
-	print_quick_help(*out());
+	co.write_line(t("Game_QuickGuide"));
 }
 void GameUi::visit(const GameStartedMessage& message) {
-	*out() << t("Game_Starting") << std::endl;
+	co.write_line(t("Game_Starting"));
 
 	const Player* self;
 	const Player* opponent;
@@ -67,7 +65,7 @@ void GameUi::visit(const GameEndedMessage& message) {
 	                   ? clientstate()->gamestate()->player_a()
 	                   : clientstate()->gamestate()->player_b());
 
-	*out() << t("Game_Ended", winner.name()) << std::endl;
+	co.write_line(t("Game_Ended", winner.name()));
 }
 
 static enum ActionChoice {
@@ -85,12 +83,12 @@ static std::map<std::string, ActionChoice> ActionChoiceMap = {
     {"quit", GAMEUI_ACTIONCHOICE_FORFEIT},
 };
 
-static ActionChoice get_action_choice(std::ostream& out, std::istream& in) {
-	out << t("Game_Choices") << std::endl;
+static ActionChoice get_action_choice(ConsoleOutput& co, std::istream& in) {
+	co.write_line(t("Game_Choices"));
 
 	bool first_time = true;
 	while (true) {
-		out << t("Game_Prompt");
+		co.write(t("Game_Prompt"));
 
 		std::string command;
 		std::getline(in, command);
@@ -100,7 +98,7 @@ static ActionChoice get_action_choice(std::ostream& out, std::istream& in) {
 		}
 
 		if (first_time) {
-			out << std::endl << t("Game_ChoicesHelp") << std::endl;
+			co.write_line(t("Game_ChoicesHelp"));
 
 			first_time = false;
 		}
@@ -108,9 +106,9 @@ static ActionChoice get_action_choice(std::ostream& out, std::istream& in) {
 }
 
 void GameUi::action() {
-	*out() << t("Game_TurnHint_You") << std::endl;
+	co.write_line(t("Game_TurnHint_You"));
 
-	ActionChoice choice = get_action_choice(*out(), *in());
+	ActionChoice choice = get_action_choice(co, *in());
 
 	std::shared_ptr<ClientMessage> client_message;
 	switch (choice) {
@@ -148,9 +146,10 @@ void GameUi::visit(const TurnChangedMessage& message) {
 
 	int sta_gained = message.effect_on_player.effect_on_stamina();
 	if (clientstate()->gamestate()->is_self_turn()) {
-		*out() << t("Game_StaminaRegeneration_You", sta_gained) << std::endl;
+		co.write_line(t("Game_StaminaRegeneration_You", sta_gained));
 	} else {
-		*out() << t("Game_StaminaRegeneration_Opponent", clientstate()->gamestate()->opponent().name(), sta_gained) << std::endl;
+		co.write_line(
+		    t("Game_StaminaRegeneration_Opponent", clientstate()->gamestate()->opponent().name(), sta_gained));
 	}
 
 	print_status();
@@ -158,7 +157,7 @@ void GameUi::visit(const TurnChangedMessage& message) {
 	if (clientstate()->gamestate()->is_self_turn()) {
 		action();
 	} else {
-		*out() << t("Game_TurnHint_Opponent", clientstate()->gamestate()->opponent().name()) << std::endl;
+		co.write_line(t("Game_TurnHint_Opponent", clientstate()->gamestate()->opponent().name()));
 	}
 }
 
@@ -210,40 +209,44 @@ class SummaryFormatter {
 			if (message.action_request.action_type == PLAYERACTIONTYPE_ABILITY) {
 				if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_ATTACK) {
 					if (is_caster_self) {
-						sb << "    >> " << t("Ability_Attack_Execute_You", _opponent.name(), message.effect_on_target.total_damage()) << std::endl;
+						sb << t("Ability_Attack_Execute_You", _opponent.name(),
+						        message.effect_on_target.total_damage()) << std::endl;
 					} else {
-						sb << "    >> " << t("Ability_Attack_Execute_Opponent", _opponent.name(), message.effect_on_target.total_damage()) << std::endl;
+						sb << t("Ability_Attack_Execute_Opponent", _opponent.name(),
+						        message.effect_on_target.total_damage()) << std::endl;
 					}
 				} else if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_DEFEND) {
 					if (is_caster_self) {
-						sb << "    >> " << t("Ability_Defend_Execute_You") << std::endl;
+						sb << t("Ability_Defend_Execute_You") << std::endl;
 					} else {
-						sb << "    >> " << t("Ability_Defend_Execute_Opponent", _opponent.name()) << std::endl;
+						sb << t("Ability_Defend_Execute_Opponent", _opponent.name())
+						   << std::endl;
 					}
 				} else {
 					if (is_caster_self) {
-						sb << "    >> " << t("Ability_Generic_Execute_You") << std::endl;
+						sb << t("Ability_Generic_Execute_You") << std::endl;
 					} else {
-						sb << "    >> " << t("Ability_Generic_Execute_Opponent", _opponent.name()) << std::endl;
+						sb << t("Ability_Generic_Execute_Opponent", _opponent.name())
+						   << std::endl;
 					}
 				}
 			} else if (message.action_request.action_type == PLAYERACTIONTYPE_FORFEIT) {
 				if (is_caster_self) {
-					sb << "    >> " << t("Ability_Forfeit_Execute_You") << std::endl;
+					sb << t("Ability_Forfeit_Execute_You") << std::endl;
 				} else {
-					sb << "    >> " << t("Ability_Forfeit_Execute_Opponent", _opponent.name()) << std::endl;
+					sb << t("Ability_Forfeit_Execute_Opponent", _opponent.name()) << std::endl;
 				}
 			} else if (message.action_request.action_type == PLAYERACTIONTYPE_IDLE) {
 				if (is_caster_self) {
-					sb << "    >> " << t("Ability_Idle_Execute_You") << std::endl;
+					sb << t("Ability_Idle_Execute_You") << std::endl;
 				} else {
-					sb << "    >> " << t("Ability_Idle_Execute_Opponent", _opponent.name()) << std::endl;
+					sb << t("Ability_Idle_Execute_Opponent", _opponent.name()) << std::endl;
 				}
 			} else {
 				if (is_caster_self) {
-					sb << "    >> " << t("Ability_Generic_Execute_You") << std::endl;
+					sb << t("Ability_Generic_Execute_You") << std::endl;
 				} else {
-					sb << "    >> " << t("Ability_Generic_Execute_Opponent", _opponent.name()) << std::endl;
+					sb << t("Ability_Generic_Execute_Opponent", _opponent.name()) << std::endl;
 				}
 			}
 		}
@@ -265,10 +268,10 @@ class SummaryFormatter {
 		std::ostringstream sb;
 		bool is_caster_self = (message.caster_player_id == _self.player_id());
 		if (!message.effect_on_caster.empty()) {
-			sb << "    " << stat_player(message.effect_on_caster, is_caster_self) << std::endl;
+			sb << stat_player(message.effect_on_caster, is_caster_self) << std::endl;
 		}
 		if (!message.effect_on_target.empty()) {
-			sb << "    " << stat_player(message.effect_on_target, !is_caster_self) << std::endl;
+			sb << stat_player(message.effect_on_target, !is_caster_self) << std::endl;
 		}
 
 		return sb.str();
@@ -325,13 +328,16 @@ void GameUi::visit(const PlayerActionMessage& message) {
 	Player& self = is_caster_self ? caster : target;
 	Player& opponent = is_caster_self ? target : caster;
 
+	ConsoleOutput action_co(co.marginh_custom_left_str(">> "));
 	SummaryFormatter formatter(self, opponent);
-	*out() << std::endl;
-	*out() << formatter.format_action(message) << std::endl;
+	co.write_line();
+	action_co.write_line(formatter.format_action(message));
+	co.write_line();
 
 	std::string effects(formatter.format_effects(message));
 	if (!effects.empty()) {
-		*out() << effects << std::endl;
+		co.write_line(effects);
+		co.write_line();
 	}
 }
 
@@ -350,24 +356,20 @@ void GameUi::print_status() {
 	//     (20 hp, 0 def, 10 sta)                     (20 hp, 0 def, 10 sta)
 
 	// extra newlines between turns
-	*out() << std::endl;
-	*out() << std::endl;
+	co.write_line();
+	co.write_line();
 
 	// turn counter
-	*out() << "    " << std::setw(31) << "[" << clientstate()->gamestate()->turn_counter() << "]";
-	*out() << std::endl;
+	co.write_center(t("Game_Turn_Counter", clientstate()->gamestate()->turn_counter()));
 
 	// player names
-	*out() << "    " << std::left << std::setw(29) << (clientstate()->gamestate()->self().name() + " (you)");
-	*out() << "  vs  ";
-	*out() << std::right << std::setw(29) << (clientstate()->gamestate()->opponent().name() + " (opponent)");
-	*out() << std::endl;
+	co.write_fill(t("Game_Turn_Players_You", clientstate()->gamestate()->self().name()), t("Game_Turn_Players_vs"),
+	              t("Game_Turn_Players_Opponent", clientstate()->gamestate()->opponent().name()));
 
 	// player stats
-	*out() << "    " << std::left << std::setw(30) << player_stats(clientstate()->gamestate()->self());
-	*out() << "    " << std::right << std::setw(30) << player_stats(clientstate()->gamestate()->opponent());
-	*out() << std::endl;
+	co.write_fill(player_stats(clientstate()->gamestate()->self()), "",
+	              player_stats(clientstate()->gamestate()->opponent()));
 
 	// extra newline at end
-	*out() << std::endl;
+	co.write_line();
 }

@@ -5,9 +5,7 @@
 #include "UserInterface.h"
 
 std::unique_ptr<UserInterface> HelpUi::run_ui() {
-	assert(out() != nullptr);
-
-	*out() << t("Help_Main") << std::endl;
+	co.write_line(t("Help_Main"));
 
 	return std::unique_ptr<UserInterface>(new MainMenuUi());
 }

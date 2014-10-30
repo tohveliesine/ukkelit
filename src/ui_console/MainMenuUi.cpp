@@ -18,11 +18,9 @@ static std::map<std::string, Command> commands = {
 };
 
 std::unique_ptr<UserInterface> MainMenuUi::run_ui() {
-	assert(out() != nullptr);
-
-	std::cout << std::endl;
-	std::cout << std::endl;
-	*out() << t("MainMenu_QuickHelp") << std::endl;
+	co.write_line();
+	co.write_line();
+	co.write_line(t("MainMenu_QuickHelp"));
 
 	// ask user what to do
 	Command command = COMMAND_UNKNOWN;

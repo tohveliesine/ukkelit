@@ -18,6 +18,7 @@
     <ClCompile Include="src\game\GameLogic.cpp" />
     <ClCompile Include="src\server\ClientCommunication.cpp" />
     <ClCompile Include="src\ui_console\ConnectRandomGameUi.cpp" />
+    <ClCompile Include="src\ui_console\ConsoleOutput.cpp" />
     <ClCompile Include="src\ui_console\entry.cpp" />
     <ClCompile Include="src\ui_console\FirstTimeUi.cpp" />
     <ClCompile Include="src\ui_console\GameUi.cpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="src\game\GameLogic.h" />
     <ClInclude Include="src\server\ClientCommunication.h" />
     <ClInclude Include="src\server\ServerState.h" />
+    <ClInclude Include="src\ui_console\ConsoleOutput.h" />
     <ClInclude Include="src\ui_console\Main.h" />
     <ClInclude Include="src\ui_console\UserInterface.h" />
   </ItemGroup>

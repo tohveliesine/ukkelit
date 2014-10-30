@@ -6,11 +6,9 @@
 #include "../common/_ver.h"
 
 std::unique_ptr<UserInterface> StartupUi::run_ui() {
-	assert(out() != nullptr);
-
-	*out() << t("Startup_Name", UKKELIT_VERSION) << std::endl;
-	*out() << std::endl;
-	*out() << t("Startup_Intro") << std::endl;
+	co.write_line(t("Startup_Name", UKKELIT_VERSION));
+	co.write_line();
+	co.write_line(t("Startup_Intro"));
 
 	return std::unique_ptr<UserInterface>(new FirstTimeUi());
 }

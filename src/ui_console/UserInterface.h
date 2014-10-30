@@ -8,29 +8,29 @@
 #include "../client/ClientState.h"
 #include "../common/ServerCommunication.h"
 #include "../common/Translations.h"
+#include "ConsoleOutput.h"
 
 class UserInterface {
 	private:
 	std::istream* _in;
-	std::ostream* _out;
 	std::shared_ptr<ClientState> _clientstate;
+	
 
 	protected:
-	UserInterface() {}
+	ConsoleOutput co;
+	UserInterface() : co(std::cout, 80) {}
+	UserInterface(int marginh) : co(std::cout, 80, marginh) {}
 
 	virtual std::unique_ptr<UserInterface> run_ui() { return nullptr; }
 
 	std::istream* in() { return _in; }
-	std::ostream* out() { return _out; }
 
 	std::shared_ptr<ClientState> clientstate() { return _clientstate; }
 
 	std::string prompt(const std::string& default_value) {
 		assert(in() != nullptr);
-		assert(out() != nullptr);
 
-		*out() << "[" << default_value << "] ?> ";
-		out()->flush();
+		co.write("[" + default_value + "] ?> ");
 
 		std::string value;
 		std::getline(*in(), value);
@@ -41,15 +41,12 @@ class UserInterface {
 	public:
 	virtual ~UserInterface(){};
 
-	std::unique_ptr<UserInterface> run(std::shared_ptr<ClientState> clientstate, std::istream* in,
-	                                   std::ostream* out) {
+	std::unique_ptr<UserInterface> run(std::shared_ptr<ClientState> clientstate, std::istream* in) {
 		assert(clientstate != nullptr);
 		assert(in != nullptr);
-		assert(out != nullptr);
 
 		_clientstate = clientstate;
 		_in = in;
-		_out = out;
 
 		return run_ui();
 	}
@@ -98,7 +95,7 @@ class GameUi : public UserInterface, public ServerCommunicationVisitor {
 	virtual std::unique_ptr<UserInterface> run_ui();
 
 	public:
-	GameUi() {}
+	GameUi() : UserInterface(4) {}
 	~GameUi() {}
 
 	void visit(const JoinedRandomGameQueueMessage& message);

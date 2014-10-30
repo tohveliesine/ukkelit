@@ -43,6 +43,9 @@
     <ClCompile Include="src\common\Translations.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui_console\ConsoleOutput.cpp">
+      <Filter>ui_console</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\ActionEffect.h">
@@ -95,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="src\common\Translations.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui_console\ConsoleOutput.h">
+      <Filter>ui_console</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
