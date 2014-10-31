@@ -8,6 +8,7 @@
 
 #include "UserInterface.h"
 #include "../client/ClientState.h"
+#include "../common/Ability.h"
 
 std::unique_ptr<UserInterface> GameUi::run_ui() {
 	assert(clientstate()->gamestate() != nullptr);
@@ -171,87 +172,15 @@ class SummaryFormatter {
 	std::string format_action(const PlayerActionMessage& message) {
 		std::ostringstream sb;
 
+		auto ability = PlayerAbility::get_ability_by_id(message.action_request.ability_id);
+		assert(ability != nullptr);
+
 		bool is_caster_self = (message.caster_player_id == _self.player_id());
+		const Player& caster = is_caster_self ? _self : _opponent;
+		const Player& target = is_caster_self ? _opponent : _self;
 
-		if (message.action_failure) {
-			// You want to attack, but fail to note that you have no stamina left.
-			// You will have to wait until it regenerates next turn.
-
-			// eräjorma wants to attack, but fails to note that she has no stamina left.
-			// eräjorma will have to wait until it regenerates next turn.
-
-			// You want to take a defensive position, but fail to note that you have no stamina left.
-			// You will have to wait until it regenerates next turn.
-
-			// eräjorma wants to take a defensive position, but fails to note that she has no stamina left.
-			// eräjorma will have to wait until it regenerates next turn.
-
-			if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_ATTACK) {
-				if (is_caster_self) {
-					sb << t("Ability_Attack_NoStamina_You") << std::endl;
-				} else {
-					sb << t("Ability_Attack_NoStamina_Opponent", _opponent.name()) << std::endl;
-				}
-			} else if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_DEFEND) {
-				if (is_caster_self) {
-					sb << t("Ability_Defend_NoStamina_You") << std::endl;
-				} else {
-					sb << t("Ability_Defend_NoStamina_Opponent", _opponent.name()) << std::endl;
-				}
-			}
-
-			if (is_caster_self) {
-				sb << t("Game_WaitUntilRegeneration_You") << std::endl;
-			} else {
-				sb << t("Game_WaitUntilRegeneration_Opponent", _opponent.name()) << std::endl;
-			}
-		} else {
-			if (message.action_request.action_type == PLAYERACTIONTYPE_ABILITY) {
-				if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_ATTACK) {
-					if (is_caster_self) {
-						sb << t("Ability_Attack_Execute_You", _opponent.name(),
-						        message.effect_on_target.total_damage()) << std::endl;
-					} else {
-						sb << t("Ability_Attack_Execute_Opponent", _opponent.name(),
-						        message.effect_on_target.total_damage()) << std::endl;
-					}
-				} else if (message.action_request.ability.ability_type == PLAYERABILITYTYPE_DEFEND) {
-					if (is_caster_self) {
-						sb << t("Ability_Defend_Execute_You") << std::endl;
-					} else {
-						sb << t("Ability_Defend_Execute_Opponent", _opponent.name())
-						   << std::endl;
-					}
-				} else {
-					if (is_caster_self) {
-						sb << t("Ability_Generic_Execute_You") << std::endl;
-					} else {
-						sb << t("Ability_Generic_Execute_Opponent", _opponent.name())
-						   << std::endl;
-					}
-				}
-			} else if (message.action_request.action_type == PLAYERACTIONTYPE_FORFEIT) {
-				if (is_caster_self) {
-					sb << t("Ability_Forfeit_Execute_You") << std::endl;
-				} else {
-					sb << t("Ability_Forfeit_Execute_Opponent", _opponent.name()) << std::endl;
-				}
-			} else if (message.action_request.action_type == PLAYERACTIONTYPE_IDLE) {
-				if (is_caster_self) {
-					sb << t("Ability_Idle_Execute_You") << std::endl;
-				} else {
-					sb << t("Ability_Idle_Execute_Opponent", _opponent.name()) << std::endl;
-				}
-			} else {
-				if (is_caster_self) {
-					sb << t("Ability_Generic_Execute_You") << std::endl;
-				} else {
-					sb << t("Ability_Generic_Execute_Opponent", _opponent.name()) << std::endl;
-				}
-			}
-		}
-
-		return sb.str();
+		return t(ability->message(message.execution, is_caster_self), caster.name(), target.name(),
+		         message.execution.effect_on_target.total_damage());
 	}
 
 	std::string format_effects(const PlayerActionMessage& message) {
@@ -267,11 +196,11 @@ class SummaryFormatter {
 
 		std::ostringstream sb;
 		bool is_caster_self = (message.caster_player_id == _self.player_id());
-		if (!message.effect_on_caster.empty()) {
-			sb << stat_player(message.effect_on_caster, is_caster_self) << std::endl;
+		if (!message.execution.effect_on_caster.empty()) {
+			sb << stat_player(message.execution.effect_on_caster, is_caster_self) << std::endl;
 		}
-		if (!message.effect_on_target.empty()) {
-			sb << stat_player(message.effect_on_target, !is_caster_self) << std::endl;
+		if (!message.execution.effect_on_target.empty()) {
+			sb << stat_player(message.execution.effect_on_target, !is_caster_self) << std::endl;
 		}
 
 		return sb.str();
@@ -321,8 +250,8 @@ class SummaryFormatter {
 void GameUi::visit(const PlayerActionMessage& message) {
 	Player& caster = clientstate()->gamestate()->player_turn();
 	Player& target = clientstate()->gamestate()->player_waiting();
-	caster.apply(message.effect_on_caster);
-	target.apply(message.effect_on_target);
+	caster.apply(message.execution.effect_on_caster);
+	target.apply(message.execution.effect_on_target);
 
 	bool is_caster_self = (caster.player_id() == clientstate()->gamestate()->self().player_id());
 	Player& self = is_caster_self ? caster : target;

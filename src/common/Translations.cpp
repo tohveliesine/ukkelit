@@ -35,20 +35,22 @@ static std::map<std::string, std::string> translations = {
 	{"Game_Turn_Players_You", "{0} (you)"}, // {0} is your player's name
 	{"Game_Turn_Players_vs", "vs"},
 	{"Game_Turn_Players_Opponent", "{0} (opponent)"}, // {0} is the opponent player's name
+	// for all ability translations:
+	//   {0} is caster player's name
+	//   {1} is target player's name
+	//   {2} total damage dealt on target
 	{"Ability_Attack_NoStamina_You", "You want to attack, but fail to note that you have no stamina left."},
-    {"Ability_Attack_NoStamina_Opponent", "{0} wants to attack, but fails to note that she has no stamina left."}, // {0} is player's name
+    {"Ability_Attack_NoStamina_Opponent", "{0} wants to attack, but fails to note that she has no stamina left."},
     {"Ability_Defend_NoStamina_You", "You want to take a defensive position, but fail to note that you have no stamina left."},
-    {"Ability_Defend_NoStamina_Opponent", "{0} wants to take a defensive position, but fails to note that she has no stamina left."}, // {0} is player's name
-    {"Ability_Attack_Execute_You", "You strike {0} with a sword, dealing {1} damage across her body."}, // {0} is target's name, {1} damage dealt
-    {"Ability_Attack_Execute_Opponent", "{0} strikes you with a sword, dealing {1} damage across your body."}, // {0} is caster's name, {1} is damage dealt
+    {"Ability_Defend_NoStamina_Opponent", "{0} wants to take a defensive position, but fails to note that she has no stamina left."},
+    {"Ability_Attack_Execute_You", "You strike {1} with a sword, dealing {2} damage across her body."},
+    {"Ability_Attack_Execute_Opponent", "{0} strikes you with a sword, dealing {2} damage across your body."},
     {"Ability_Defend_Execute_You", "You get in a defensive position."},
-    {"Ability_Defend_Execute_Opponent", "{0} gets in a defensive position."}, // {0} is player's name
-    {"Ability_Generic_Execute_You", "You do something incomprehensible."},
-    {"Ability_Generic_Execute_Opponent", "{0} does something incomprehensible."}, // {0} is player's name
+    {"Ability_Defend_Execute_Opponent", "{0} gets in a defensive position."},
     {"Ability_Forfeit_Execute_You", "You decide to give up, like a coward."},
-    {"Ability_Forfeit_Execute_Opponent", "{0} decides to give up, like a coward."}, // {0} is player's name
+    {"Ability_Forfeit_Execute_Opponent", "{0} decides to give up, like a coward."},
     {"Ability_Idle_Execute_You", "You are unsure of your ability to do anything meaningful, and opt to do nothing."},
-    {"Ability_Idle_Execute_Opponent", "{0} is unsure of her ability to do anything meaningful, and opts to do nothing."}, // {0} is player's name
+    {"Ability_Idle_Execute_Opponent", "{0} is unsure of her ability to do anything meaningful, and opts to do nothing."},
 	{"Help_Main", "Ukkelit is a networked game for fast one versus one combat matches.\n"
                   "Mastering it requires strategy and practice.\n"
                   "\n"

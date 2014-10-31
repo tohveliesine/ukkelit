@@ -46,6 +46,9 @@
     <ClCompile Include="src\ui_console\ConsoleOutput.cpp">
       <Filter>ui_console</Filter>
     </ClCompile>
+    <ClCompile Include="src\common\Ability.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\ActionEffect.h">

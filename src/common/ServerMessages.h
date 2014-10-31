@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "ClientMessages.h"
 #include "ActionEffect.h"
+#include "Ability.h"
 
 struct JoinedRandomGameQueueMessage;
 struct RandomGameFoundMessage;
@@ -25,6 +26,7 @@ class ServerCommunicationVisitor {
 
 struct ServerMessage {
 	virtual void accept(ServerCommunicationVisitor& visitor) const = 0;
+	virtual ~ServerMessage() {}
 };
 
 struct JoinedRandomGameQueueMessage : public ServerMessage {
@@ -72,24 +74,15 @@ struct TurnChangedMessage : public ServerMessage {
 	void accept(ServerCommunicationVisitor& visitor) const { visitor.visit(*this); }
 };
 
-enum PlayerActionFailureReason {
-	PLAYERACTIONFAILUREREASON_NOFAILURE,
-	PLAYERACTIONFAILUREREASON_NOTENOUGHSTAMINA,
-};
-
 struct PlayerActionMessage : public ServerMessage {
 	// original request sent in by the client
 	PlayerActionRequestClientMessage action_request;
 
-	bool action_failure;
-	PlayerActionFailureReason action_failure_reason;
-
 	PlayerId caster_player_id;
 	PlayerId target_player_id;
 
-	ActionEffect effect_on_caster;
-	ActionEffect effect_on_target;
+	PlayerAbilityExecution execution;
 
-	PlayerActionMessage() : action_failure(false), action_failure_reason(PLAYERACTIONFAILUREREASON_NOFAILURE) {}
+	PlayerActionMessage() {}
 	void accept(ServerCommunicationVisitor& visitor) const { visitor.visit(*this); }
 };

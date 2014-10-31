@@ -9,25 +9,25 @@ Player::~Player() {}
 std::unique_ptr<ClientMessage> Player::forfeit_request(SessionId session_id) const {
 	auto request = new PlayerActionRequestClientMessage();
 	std::unique_ptr<ClientMessage> message(request);
-	request->action_type = PLAYERACTIONTYPE_FORFEIT;
+	request->ability_id = "forfeit";
 	request->session_id = session_id;
 
 	return message;
 }
 
 std::unique_ptr<ClientMessage> Player::attack_request(SessionId session_id) const {
-	auto request = new PlayerActionRequestClientMessage(PLAYERABILITYTYPE_ATTACK);
+	auto request = new PlayerActionRequestClientMessage();
 	std::unique_ptr<ClientMessage> message(request);
-	request->action_type = PLAYERACTIONTYPE_ABILITY;
+	request->ability_id = "attack";
 	request->session_id = session_id;
 
 	return message;
 }
 
 std::unique_ptr<ClientMessage> Player::defend_request(SessionId session_id) const {
-	auto request = new PlayerActionRequestClientMessage(PLAYERABILITYTYPE_DEFEND);
+	auto request = new PlayerActionRequestClientMessage();
 	std::unique_ptr<ClientMessage> message(request);
-	request->action_type = PLAYERACTIONTYPE_ABILITY;
+	request->ability_id = "defense";
 	request->session_id = session_id;
 
 	return message;
@@ -36,7 +36,7 @@ std::unique_ptr<ClientMessage> Player::defend_request(SessionId session_id) cons
 std::unique_ptr<ClientMessage> Player::idle_request(SessionId session_id) const {
 	auto request = new PlayerActionRequestClientMessage();
 	std::unique_ptr<ClientMessage> message(request);
-	request->action_type = PLAYERACTIONTYPE_IDLE;
+	request->ability_id = "idle";
 	request->session_id = session_id;
 
 	return message;

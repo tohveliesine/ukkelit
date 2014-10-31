@@ -2,6 +2,7 @@
 
 #include "GameLogic.h"
 #include "../common/ActionEffect.h"
+#include "../common/Ability.h"
 
 GameLogic::GameLogic() {}
 
@@ -51,64 +52,42 @@ void GameLogic::visit(const PlayerActionRequestClientMessage& message) {
 
 	std::shared_ptr<PlayerActionMessage> effect_message(new PlayerActionMessage());
 	effect_message->action_request = message;
-	effect_message->caster_player_id = server_state().gamestate().player_turn().player_id();
-	effect_message->target_player_id = server_state().gamestate().player_waiting().player_id();
+	effect_message->caster_player_id = caster.player_id();
+	effect_message->target_player_id = target.player_id();
 
-	if (message.action_type == PLAYERACTIONTYPE_ABILITY) {
-		ActionEffect effect_on_caster;
-		ActionEffect effect_on_target;
-		if (message.ability.ability_type == PLAYERABILITYTYPE_ATTACK) {
-			effect_on_caster.effect_on_stamina(-4);
-			effect_on_target.deal_damage(6, target);
-		} else if (message.ability.ability_type == PLAYERABILITYTYPE_DEFEND) {
-			effect_on_caster.effect_on_stamina(-2);
-			effect_on_caster.effect_on_defense(4);
-		}
-		
-		// check that there is enough stamina
-		if (server_state().gamestate().player_turn().stamina() + effect_on_caster.effect_on_stamina() < 0) {
-			// not enough stamina!
-			effect_message->action_failure = true;
-			effect_message->action_failure_reason = PLAYERACTIONFAILUREREASON_NOTENOUGHSTAMINA;
-		} else {
-			// apply effects to game state
-			server_state().gamestate().player_turn().apply(effect_on_caster);
-			server_state().gamestate().player_waiting().apply(effect_on_target);
-			effect_message->effect_on_caster = effect_on_caster;
-			effect_message->effect_on_target = effect_on_target;
-		}
+	// ability execution
+	std::unique_ptr<PlayerAbility> ability(PlayerAbility::get_ability_by_id(message.ability_id));
+	assert(ability.get() != nullptr);
+	effect_message->execution = ability->execute(caster, target);
 
-		// send message
-		server_state().client_communication()->send_message(effect_message);
+	// apply effects to game state
+	caster.apply(effect_message->execution.effect_on_caster);
+	target.apply(effect_message->execution.effect_on_target);
 
-		// check for game over
-		if (server_state().gamestate().player_a().is_alive() && server_state().gamestate().player_b().is_alive()) {
-			// no one dead, game continues
-			announce_next_turn();
-		} else {
-			// death for one of the players
-			if (!server_state().gamestate().player_a().is_alive()) {
-				// player a died, winner is player b
-				server_state().gamestate().winner(server_state().gamestate().player_b().player_id());
-			} else {
-				// player b died, winner is player a
-				server_state().gamestate().winner(server_state().gamestate().player_a().player_id());
-			}
+	// notify clients of the action
+	server_state().client_communication()->send_message(effect_message);
 
-			announce_game_ended();
-		}
-	} else if (message.action_type == PLAYERACTIONTYPE_IDLE) {
-		server_state().client_communication()->send_message(effect_message);
-
-		announce_next_turn();
-	} else if (message.action_type == PLAYERACTIONTYPE_FORFEIT) {
-		server_state().client_communication()->send_message(effect_message);
-
+	if (message.ability_id == "forfeit") {
 		server_state().gamestate().winner(target.player_id());
+		announce_game_ended();
+		return;
+	}
+
+	// check for game over
+	if (server_state().gamestate().player_a().is_alive() && server_state().gamestate().player_b().is_alive()) {
+		// no one dead, game continues
+		announce_next_turn();
+	} else {
+		// death for one of the players
+		if (!server_state().gamestate().player_a().is_alive()) {
+			// player a died, winner is player b
+			server_state().gamestate().winner(server_state().gamestate().player_b().player_id());
+		} else {
+			// player b died, winner is player a
+			server_state().gamestate().winner(server_state().gamestate().player_a().player_id());
+		}
 
 		announce_game_ended();
-	} else {
-		assert("unknown action type" && false);
 	}
 }
 
@@ -126,7 +105,7 @@ void GameLogic::announce_next_turn() {
 	announce_turn();
 
 	// ai stuff: always just attempt to attack
-	Player &ai = server_state().gamestate().player_b();
+	Player& ai = server_state().gamestate().player_b();
 	if (&server_state().gamestate().player_turn() == &ai) {
 		SessionId ai_session_id = server_state().gamestate().player_b_sessionid();
 		ai.attack_request(ai_session_id)->accept(*this);

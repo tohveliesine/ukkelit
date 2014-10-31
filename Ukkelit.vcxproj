@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\common\Ability.cpp" />
     <ClCompile Include="src\common\ActionEffect.cpp" />
     <ClCompile Include="src\common\Player.cpp" />
     <ClCompile Include="src\common\ServerCommunication.cpp" />

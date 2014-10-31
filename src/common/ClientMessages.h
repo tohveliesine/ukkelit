@@ -15,6 +15,7 @@ class ClientCommunicationVisitor {
 
 struct ClientMessage {
 	virtual void accept(ClientCommunicationVisitor& visitor) const = 0;
+	virtual ~ClientMessage() {}
 };
 
 struct JoinRandomGameQueueClientMessage : public ClientMessage {
@@ -22,34 +23,11 @@ struct JoinRandomGameQueueClientMessage : public ClientMessage {
 
 	void accept(ClientCommunicationVisitor& visitor) const { visitor.visit(*this); }
 };
-
-enum PlayerActionType {
-	PLAYERACTIONTYPE_ABILITY,
-	PLAYERACTIONTYPE_IDLE,
-	PLAYERACTIONTYPE_FORFEIT,
-};
-
-enum PlayerAbilityType {
-	PLAYERABILITYTYPE_ATTACK,
-	PLAYERABILITYTYPE_DEFEND,
-};
-
-struct PlayerAbility {
-	PlayerAbilityType ability_type;
-};
-
 struct PlayerActionRequestClientMessage : public ClientMessage {
 	SessionId session_id;
-	PlayerActionType action_type;
-	PlayerAbility ability;
+	std::string ability_id;
 
 	void accept(ClientCommunicationVisitor& visitor) const { visitor.visit(*this); }
-
-	PlayerActionRequestClientMessage() {}
-
-	PlayerActionRequestClientMessage(PlayerAbilityType ability_type) {
-		ability.ability_type = ability_type;
-	}
 };
 
 enum ClientMessageType {
