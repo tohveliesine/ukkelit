@@ -75,6 +75,7 @@ class DefensePlayerAbility : public PlayerAbility {
 			return effect;
 		}
 
+		effect.effect_on_caster.effect_on_stamina(-2);
 		effect.effect_on_caster.effect_on_defense(+2);
 
 		return effect;
