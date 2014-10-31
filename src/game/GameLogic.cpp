@@ -116,10 +116,13 @@ void GameLogic::announce_turn() {
 	std::shared_ptr<TurnChangedMessage> turn_changed_message(new TurnChangedMessage());
 	turn_changed_message->player_id = server_state().gamestate().player_turn().player_id();
 	turn_changed_message->turn_number = server_state().gamestate().turn_counter();
+
+	// give +1 sta on every turn, except on the starter turn
 	if (server_state().gamestate().turn_counter() > 0) {
 		turn_changed_message->effect_on_player.effect_on_stamina(+1);
 		server_state().gamestate().player_turn().apply(turn_changed_message->effect_on_player);
 	}
+
 	server_state().client_communication()->send_message(turn_changed_message);
 }
 

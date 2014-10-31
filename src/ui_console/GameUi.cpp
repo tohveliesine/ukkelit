@@ -146,11 +146,13 @@ void GameUi::visit(const TurnChangedMessage& message) {
 	clientstate()->gamestate()->player_turn().apply(message.effect_on_player);
 
 	int sta_gained = message.effect_on_player.effect_on_stamina();
+	if (sta_gained > 0) {
 	if (clientstate()->gamestate()->is_self_turn()) {
 		co.write_line(t("Game_StaminaRegeneration_You", sta_gained));
 	} else {
-		co.write_line(
-		    t("Game_StaminaRegeneration_Opponent", clientstate()->gamestate()->opponent().name(), sta_gained));
+			co.write_line(t("Game_StaminaRegeneration_Opponent",
+			                clientstate()->gamestate()->opponent().name(), sta_gained));
+		}
 	}
 
 	print_status();
