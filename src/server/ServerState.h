@@ -12,7 +12,7 @@ class ServerGameState : public GameState {
 	PlayerId _winner;
 
 	public:
-	ServerGameState() : _winner(0), _player_a_sessionid(0), _player_b_sessionid(0) {}
+	ServerGameState() : _player_a_sessionid(0), _player_b_sessionid(0), _winner(0) {}
 
 	SessionId player_a_sessionid() const { return _player_a_sessionid; }
 	void player_a_sessionid(SessionId sessionid) { _player_a_sessionid = sessionid; }
@@ -28,7 +28,7 @@ class ServerGameState : public GameState {
 		}
 	}
 
-	const PlayerId winner() const { return _winner; }
+	PlayerId winner() const { return _winner; }
 	void winner(PlayerId winner) { _winner = winner; }
 };
 

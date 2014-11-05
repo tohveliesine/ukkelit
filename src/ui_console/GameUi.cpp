@@ -39,7 +39,7 @@ void GameUi::visit(const JoinedRandomGameQueueMessage& message) {
 	clientstate()->gamestate()->session_id(message.session_id);
 	clientstate()->gamestate()->self().player_id(message.player_id);
 }
-void GameUi::visit(const RandomGameFoundMessage& message) {
+void GameUi::visit(const RandomGameFoundMessage&) {
 	co.write_line(t("Game_Queue_GameFound"));
 
 	// print out quick help
@@ -69,7 +69,7 @@ void GameUi::visit(const GameEndedMessage& message) {
 	co.write_line(t("Game_Ended", winner.name()));
 }
 
-static enum ActionChoice {
+enum ActionChoice {
 	GAMEUI_ACTIONCHOICE_ATTACK,
 	GAMEUI_ACTIONCHOICE_DEFEND,
 	GAMEUI_ACTIONCHOICE_NOTHING,
