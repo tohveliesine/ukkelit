@@ -65,7 +65,7 @@ class DefensePlayerAbility : public PlayerAbility {
 	public:
 	std::string id() const { return "defense"; }
 
-	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
+	PlayerAbilityExecution execute(const Player& caster, const Player&) const {
 		PlayerAbilityExecution effect;
 
 		// check that the caster has enough stamina
@@ -99,13 +99,13 @@ class IdlePlayerAbility : public PlayerAbility {
 	public:
 	std::string id() const { return "idle"; }
 
-	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
+	PlayerAbilityExecution execute(const Player&, const Player&) const {
 		PlayerAbilityExecution effect;
 
 		return effect;
 	}
 
-	std::string message(const PlayerAbilityExecution& execution, bool caster_is_you) const {
+	std::string message(const PlayerAbilityExecution&, bool caster_is_you) const {
 		return caster_is_you ? "Ability_Idle_Execute_You" : "Ability_Idle_Execute_Opponent";
 	}
 };
@@ -114,13 +114,13 @@ class ForfeitPlayerAbility : public PlayerAbility {
 	public:
 	std::string id() const { return "forfeit"; }
 
-	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
+	PlayerAbilityExecution execute(const Player&, const Player&) const {
 		PlayerAbilityExecution effect;
 
 		return effect;
 	}
 
-	std::string message(const PlayerAbilityExecution& execution, bool caster_is_you) const {
+	std::string message(const PlayerAbilityExecution&, bool caster_is_you) const {
 		return caster_is_you ? "Ability_Forfeit_Execute_You" : "Ability_Forfeit_Execute_Opponent";
 	}
 };

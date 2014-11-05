@@ -5,7 +5,7 @@
 
 #include "UserInterface.h"
 
-static enum Command {
+enum Command {
 	COMMAND_UNKNOWN,
 	COMMAND_RANDOM_GAME,
 	COMMAND_OPTIONS,
