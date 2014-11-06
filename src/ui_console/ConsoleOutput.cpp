@@ -24,9 +24,9 @@ void ConsoleOutput::write_line() { write_line(""); }
 
 // Returns the position in the string where to apply line break to.
 // Breaks at word boundaries if possible.
-static int get_ideal_linebreak(const std::string& line, int maxlen) {
+static int get_ideal_linebreak(const std::string& line, unsigned int maxlen) {
 	int wordbreak;
-	int last_space = line.find_last_of(' ', maxlen);
+	auto last_space = line.find_last_of(' ', maxlen);
 	if (last_space == std::string::npos) {
 		// not found! break at end
 		wordbreak = maxlen;

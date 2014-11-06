@@ -76,7 +76,7 @@ class DefendPlayerAbility : public PlayerAbility {
 	std::vector<std::string> commands() const { return {"defend"}; }
 	std::string ability_description_key() const { return "Ability_Defend_Description"; }
 
-	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
+	PlayerAbilityExecution execute(const Player& caster, const Player&) const {
 		PlayerAbilityExecution effect;
 
 		// check that the caster has enough stamina
@@ -114,13 +114,13 @@ class IdlePlayerAbility : public PlayerAbility {
 	std::vector<std::string> commands() const { return {"nothing", "idle"}; }
 	std::string ability_description_key() const { return "Ability_Idle_Description"; }
 
-	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
+	PlayerAbilityExecution execute(const Player&, const Player&) const {
 		PlayerAbilityExecution effect;
 
 		return effect;
 	}
 
-	std::string message(const PlayerAbilityExecution& execution, bool caster_is_you) const {
+	std::string message(const PlayerAbilityExecution&, bool caster_is_you) const {
 		return caster_is_you ? "Ability_Idle_Execute_You" : "Ability_Idle_Execute_Opponent";
 	}
 };
@@ -133,13 +133,13 @@ class ForfeitPlayerAbility : public PlayerAbility {
 	std::vector<std::string> commands() const { return {"forfeit", "quit"}; }
 	std::string ability_description_key() const { return "Ability_Forfeit_Description"; }
 
-	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
+	PlayerAbilityExecution execute(const Player&, const Player&) const {
 		PlayerAbilityExecution effect;
 
 		return effect;
 	}
 
-	std::string message(const PlayerAbilityExecution& execution, bool caster_is_you) const {
+	std::string message(const PlayerAbilityExecution&, bool caster_is_you) const {
 		return caster_is_you ? "Ability_Forfeit_Execute_You" : "Ability_Forfeit_Execute_Opponent";
 	}
 };
