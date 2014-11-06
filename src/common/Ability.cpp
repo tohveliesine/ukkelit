@@ -5,7 +5,8 @@
 
 #include "Ability.h"
 
-#define DECLARE_ABILITY(x) { x::id(), []() {return std::unique_ptr<PlayerAbility>(new x()); } }
+// clang-format off
+#define DECLARE_ABILITY(x) { x::id(), []() { return std::unique_ptr<PlayerAbility>(new x()); } }
 
 static std::map<std::string, std::function<std::unique_ptr<PlayerAbility>()>> abilities = {
 	DECLARE_ABILITY(SlashPlayerAbility),
@@ -13,6 +14,7 @@ static std::map<std::string, std::function<std::unique_ptr<PlayerAbility>()>> ab
 	DECLARE_ABILITY(IdlePlayerAbility),
 	DECLARE_ABILITY(ForfeitPlayerAbility),
 };
+// clang-format on
 
 std::unique_ptr<PlayerAbility> PlayerAbility::get_ability_by_id(const std::string& ability_id) {
 	if (abilities.count(ability_id) == 1) {

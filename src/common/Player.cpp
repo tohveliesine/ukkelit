@@ -3,8 +3,8 @@
 #include "ActionEffect.h"
 
 Player::Player()
-    : _name("unnamed"), _healthpoints(20), _defense(0), _stamina(10),
-      _available_abilities({"slash", "defend", "idle", "forfeit"}) {}
+    : _available_abilities({"slash", "defend", "idle", "forfeit"}), _name("unnamed"), _healthpoints(20), _defense(0),
+      _stamina(10) {}
 
 Player::~Player() {}
 

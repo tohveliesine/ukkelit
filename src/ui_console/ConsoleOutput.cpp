@@ -111,8 +111,9 @@ void ConsoleOutput::write_fill(const std::string& left_text, const std::string& 
 	// calculate spaces after left text
 	int left_justify = (width() / 2) - marginh() - left_text.length() - (middle_text.length() / 2);
 	// calculate spaces after center to right-justify the text
-	int right_justify = (width() / 2) - (middle_text.length() / 2 + middle_text.length() % 2) - right_text.length() - marginh();
+	int right_justify =
+	    (width() / 2) - (middle_text.length() / 2 + middle_text.length() % 2) - right_text.length() - marginh();
 
-	_out << marginh_str() << left_text << std::string(left_justify, ' ') << middle_text << std::string(right_justify, ' ')
-	     << right_text << NEWLINE;
+	_out << marginh_str() << left_text << std::string(left_justify, ' ') << middle_text
+	     << std::string(right_justify, ' ') << right_text << NEWLINE;
 }

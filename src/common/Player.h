@@ -12,7 +12,7 @@ class ActionEffect;
 
 class Player {
 	PlayerId _player_id;
-	std::vector<const std::string> _available_abilities;
+	std::vector<std::string> _available_abilities;
 
 	std::string _name;
 
@@ -38,7 +38,7 @@ class Player {
 
 	bool is_alive() const { return _healthpoints > 0; }
 
-	const std::vector<const std::string> available_abilities() const {
+	const std::vector<std::string>& available_abilities() const {
 		return _available_abilities;
 	}
 

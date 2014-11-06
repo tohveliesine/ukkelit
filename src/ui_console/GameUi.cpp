@@ -70,7 +70,7 @@ void GameUi::visit(const GameEndedMessage& message) {
 }
 
 static std::string get_action_choice(ConsoleOutput& co, std::istream& in,
-                                     const std::vector<const std::string> available_abilities) {
+                                     const std::vector<std::string> available_abilities) {
 	co.write_line(t("Game_Choices"));
 	co.write_line();
 
