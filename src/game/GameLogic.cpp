@@ -67,7 +67,7 @@ void GameLogic::visit(const PlayerActionRequestClientMessage& message) {
 	// notify clients of the action
 	server_state().client_communication()->send_message(effect_message);
 
-	if (message.ability_id == "forfeit") {
+	if (message.ability_id == ForfeitPlayerAbility::id()) {
 		server_state().gamestate().winner(target.player_id());
 		announce_game_ended();
 		return;
@@ -108,7 +108,8 @@ void GameLogic::announce_next_turn() {
 	Player& ai = server_state().gamestate().player_b();
 	if (&server_state().gamestate().player_turn() == &ai) {
 		SessionId ai_session_id = server_state().gamestate().player_b_sessionid();
-		ai.attack_request(ai_session_id)->accept(*this);
+		PlayerActionRequestClientMessage attack_message(ai_session_id, SlashPlayerAbility::id());
+		attack_message.accept(*this);
 	}
 }
 

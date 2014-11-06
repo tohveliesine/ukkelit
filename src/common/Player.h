@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "../common/CommonTypes.h"
 
@@ -11,6 +12,7 @@ class ActionEffect;
 
 class Player {
 	PlayerId _player_id;
+	std::vector<const std::string> _available_abilities;
 
 	std::string _name;
 
@@ -36,12 +38,12 @@ class Player {
 
 	bool is_alive() const { return _healthpoints > 0; }
 
+	const std::vector<const std::string> available_abilities() const {
+		return _available_abilities;
+	}
+
 	Player();
 	~Player();
 
-	std::unique_ptr<ClientMessage> attack_request(SessionId session_id) const;
-	std::unique_ptr<ClientMessage> defend_request(SessionId session_id) const;
-	std::unique_ptr<ClientMessage> idle_request(SessionId session_id) const;
-	std::unique_ptr<ClientMessage> forfeit_request(SessionId session_id) const;
 	void apply(const ActionEffect& effect);
 };

@@ -5,11 +5,13 @@
 
 #include "Ability.h"
 
+#define DECLARE_ABILITY(x) { x::id(), []() {return std::unique_ptr<PlayerAbility>(new x()); } }
+
 static std::map<std::string, std::function<std::unique_ptr<PlayerAbility>()>> abilities = {
-		{ "attack", []() {return std::unique_ptr<PlayerAbility>(new AttackPlayerAbility()); } },
-		{ "defense", []() {return std::unique_ptr<PlayerAbility>(new DefensePlayerAbility()); } },
-		{ "idle", []() {return std::unique_ptr<PlayerAbility>(new IdlePlayerAbility()); } },
-		{ "forfeit", []() {return std::unique_ptr<PlayerAbility>(new ForfeitPlayerAbility()); } },
+	DECLARE_ABILITY(SlashPlayerAbility),
+	DECLARE_ABILITY(DefendPlayerAbility),
+	DECLARE_ABILITY(IdlePlayerAbility),
+	DECLARE_ABILITY(ForfeitPlayerAbility),
 };
 
 std::unique_ptr<PlayerAbility> PlayerAbility::get_ability_by_id(const std::string& ability_id) {

@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 
+#include "Ability.h"
+
 struct JoinRandomGameQueueClientMessage;
 struct PlayerActionRequestClientMessage;
 
@@ -26,6 +28,11 @@ struct JoinRandomGameQueueClientMessage : public ClientMessage {
 struct PlayerActionRequestClientMessage : public ClientMessage {
 	SessionId session_id;
 	std::string ability_id;
+
+	PlayerActionRequestClientMessage() {}
+
+	PlayerActionRequestClientMessage(SessionId session_id, const std::string& ability_id)
+	    : session_id(session_id), ability_id(ability_id) {}
 
 	void accept(ClientCommunicationVisitor& visitor) const { visitor.visit(*this); }
 };

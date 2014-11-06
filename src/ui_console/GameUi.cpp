@@ -69,39 +69,34 @@ void GameUi::visit(const GameEndedMessage& message) {
 	co.write_line(t("Game_Ended", winner.name()));
 }
 
-static enum ActionChoice {
-	GAMEUI_ACTIONCHOICE_ATTACK,
-	GAMEUI_ACTIONCHOICE_DEFEND,
-	GAMEUI_ACTIONCHOICE_NOTHING,
-	GAMEUI_ACTIONCHOICE_FORFEIT,
-};
-
-static std::map<std::string, ActionChoice> ActionChoiceMap = {
-    {"attack", GAMEUI_ACTIONCHOICE_ATTACK},
-    {"defend", GAMEUI_ACTIONCHOICE_DEFEND},
-    {"nothing", GAMEUI_ACTIONCHOICE_NOTHING},
-    {"forfeit", GAMEUI_ACTIONCHOICE_FORFEIT},
-    {"quit", GAMEUI_ACTIONCHOICE_FORFEIT},
-};
-
-static ActionChoice get_action_choice(ConsoleOutput& co, std::istream& in) {
+static std::string get_action_choice(ConsoleOutput& co, std::istream& in,
+                                     const std::vector<const std::string> available_abilities) {
 	co.write_line(t("Game_Choices"));
+	co.write_line();
 
-	bool first_time = true;
+	std::map<const std::string, std::shared_ptr<const PlayerAbility>> abilities;
+
+	// write helps and bild command->ability map
+	for (auto ability_id : available_abilities) {
+		std::shared_ptr<const PlayerAbility> ability = PlayerAbility::get_ability_by_id(ability_id);
+		auto commands = ability->commands();
+		std::string primary_command = commands.at(0);
+		for (std::string command : commands) {
+			abilities[command] = ability;
+		}
+
+		co.write_line(t("Game_ChoiceItem", primary_command, t(ability->ability_description_key())));
+	}
+
 	while (true) {
 		co.write(t("Game_Prompt"));
 
 		std::string command;
 		std::getline(in, command);
 
-		if (ActionChoiceMap.count(command) == 1) {
-			return ActionChoiceMap[command];
-		}
-
-		if (first_time) {
-			co.write_line(t("Game_ChoicesHelp"));
-
-			first_time = false;
+		// figure out command -> ability
+		if (abilities.count(command) == 1) {
+			return abilities[command]->ability_id();
 		}
 	}
 }
@@ -109,35 +104,13 @@ static ActionChoice get_action_choice(ConsoleOutput& co, std::istream& in) {
 void GameUi::action() {
 	co.write_line(t("Game_TurnHint_You"));
 
-	ActionChoice choice = get_action_choice(co, *in());
+	std::string ability_id =
+	    get_action_choice(co, *in(), clientstate()->gamestate()->player_turn().available_abilities());
 
-	std::shared_ptr<ClientMessage> client_message;
-	switch (choice) {
-	case GAMEUI_ACTIONCHOICE_ATTACK:
-		client_message =
-		    clientstate()->gamestate()->self().attack_request(clientstate()->gamestate()->session_id());
+	std::shared_ptr<ClientMessage> client_message =
+	    std::make_shared<PlayerActionRequestClientMessage>(clientstate()->gamestate()->session_id(), ability_id);
 
-		break;
-	case GAMEUI_ACTIONCHOICE_DEFEND:
-		client_message =
-		    clientstate()->gamestate()->self().defend_request(clientstate()->gamestate()->session_id());
-
-		break;
-	case GAMEUI_ACTIONCHOICE_NOTHING:
-		client_message =
-		    clientstate()->gamestate()->self().idle_request(clientstate()->gamestate()->session_id());
-
-		break;
-	case GAMEUI_ACTIONCHOICE_FORFEIT:
-		client_message =
-		    clientstate()->gamestate()->self().forfeit_request(clientstate()->gamestate()->session_id());
-
-		break;
-	}
-
-	if (client_message != nullptr) {
-		clientstate()->server_communication()->send_message(client_message);
-	}
+	clientstate()->server_communication()->send_message(client_message);
 }
 
 void GameUi::visit(const TurnChangedMessage& message) {
@@ -147,9 +120,9 @@ void GameUi::visit(const TurnChangedMessage& message) {
 
 	int sta_gained = message.effect_on_player.effect_on_stamina();
 	if (sta_gained > 0) {
-	if (clientstate()->gamestate()->is_self_turn()) {
-		co.write_line(t("Game_StaminaRegeneration_You", sta_gained));
-	} else {
+		if (clientstate()->gamestate()->is_self_turn()) {
+			co.write_line(t("Game_StaminaRegeneration_You", sta_gained));
+		} else {
 			co.write_line(t("Game_StaminaRegeneration_Opponent",
 			                clientstate()->gamestate()->opponent().name(), sta_gained));
 		}

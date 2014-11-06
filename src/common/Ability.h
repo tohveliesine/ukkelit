@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <string>
+#include <vector>
 
 #include "ActionEffect.h"
 #include "Player.h"
@@ -20,16 +21,22 @@ struct PlayerAbilityExecution {
 
 class PlayerAbility {
 	public:
-	virtual std::string id() const = 0;
+	virtual std::vector<std::string> commands() const = 0;
+	virtual std::string ability_description_key() const = 0;
+	virtual std::string ability_id() const = 0;
 	virtual PlayerAbilityExecution execute(const Player& caster, const Player& target) const = 0;
 	virtual std::string message(const PlayerAbilityExecution& execution, bool caster_is_you) const = 0;
 
 	static std::unique_ptr<PlayerAbility> get_ability_by_id(const std::string& ability_id);
 };
 
-class AttackPlayerAbility : public PlayerAbility {
+class SlashPlayerAbility : public PlayerAbility {
 	public:
-	std::string id() const { return "attack"; }
+	static std::string id() { return "slash"; }
+	std::string ability_id() const { return id(); }
+
+	std::vector<std::string> commands() const { return {"attack", "slash"}; }
+	std::string ability_description_key() const { return "Ability_Slash_Description"; }
 
 	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
 		PlayerAbilityExecution effect;
@@ -50,20 +57,24 @@ class AttackPlayerAbility : public PlayerAbility {
 	std::string message(const PlayerAbilityExecution& execution, bool caster_is_you) const {
 		if (execution.failure) {
 			if (execution.failure_reason == PLAYERABILITYEXECUTIONFAILUREREASON_NOTENOUGHSTAMINA) {
-				return caster_is_you ? "Ability_Attack_NoStamina_You"
-				                     : "Ability_Attack_NoStamina_Opponent";
+				return caster_is_you ? "Ability_Slash_NoStamina_You"
+				                     : "Ability_Slash_NoStamina_Opponent";
 			}
 		} else {
-			return caster_is_you ? "Ability_Attack_Execute_You" : "Ability_Attack_Execute_Opponent";
+			return caster_is_you ? "Ability_Slash_Execute_You" : "Ability_Slash_Execute_Opponent";
 		}
 
 		assert("fail" && false);
 	}
 };
 
-class DefensePlayerAbility : public PlayerAbility {
+class DefendPlayerAbility : public PlayerAbility {
 	public:
-	std::string id() const { return "defense"; }
+	static std::string id() { return "defend"; }
+	std::string ability_id() const { return id(); }
+
+	std::vector<std::string> commands() const { return {"defend"}; }
+	std::string ability_description_key() const { return "Ability_Defend_Description"; }
 
 	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
 		PlayerAbilityExecution effect;
@@ -76,7 +87,7 @@ class DefensePlayerAbility : public PlayerAbility {
 		}
 
 		effect.effect_on_caster.effect_on_stamina(-2);
-		effect.effect_on_caster.effect_on_defense(+2);
+		effect.effect_on_caster.effect_on_defense(+4);
 
 		return effect;
 	}
@@ -97,7 +108,11 @@ class DefensePlayerAbility : public PlayerAbility {
 
 class IdlePlayerAbility : public PlayerAbility {
 	public:
-	std::string id() const { return "idle"; }
+	static std::string id() { return "idle"; }
+	std::string ability_id() const { return id(); }
+
+	std::vector<std::string> commands() const { return {"nothing", "idle"}; }
+	std::string ability_description_key() const { return "Ability_Idle_Description"; }
 
 	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
 		PlayerAbilityExecution effect;
@@ -112,7 +127,11 @@ class IdlePlayerAbility : public PlayerAbility {
 
 class ForfeitPlayerAbility : public PlayerAbility {
 	public:
-	std::string id() const { return "forfeit"; }
+	static std::string id() { return "forfeit"; }
+	std::string ability_id() const { return id(); }
+
+	std::vector<std::string> commands() const { return {"forfeit", "quit"}; }
+	std::string ability_description_key() const { return "Ability_Forfeit_Description"; }
 
 	PlayerAbilityExecution execute(const Player& caster, const Player& target) const {
 		PlayerAbilityExecution effect;

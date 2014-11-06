@@ -18,7 +18,7 @@ int ServerCommunication::receive_messages(ServerCommunicationVisitor& visitor) {
 	while (!received_messages.empty()) {
 		auto message = received_messages.front();
 		received_messages.pop();
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 		message->accept(visitor);
 		++count;
