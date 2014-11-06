@@ -36,8 +36,3 @@ struct PlayerActionRequestClientMessage : public ClientMessage {
 
 	void accept(ClientCommunicationVisitor& visitor) const { visitor.visit(*this); }
 };
-
-enum ClientMessageType {
-	CLIENTMESSAGETYPE_JOINRANDOMGAMEQUEUE,
-	CLIENTMESSAGETYPE_PLAYERACTIONREQUEST,
-};

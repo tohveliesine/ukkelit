@@ -7,14 +7,14 @@
 #include "ActionEffect.h"
 #include "Player.h"
 
-enum PlayerAbilityExecutionFailureReason {
-	PLAYERABILITYEXECUTIONFAILUREREASON_NOFAILURE,
-	PLAYERABILITYEXECUTIONFAILUREREASON_NOTENOUGHSTAMINA,
+enum class PlayerAbilityExecutionFailureReason {
+	NO_FAILURE,
+	NOT_ENOUGH_STAMINA,
 };
 
 struct PlayerAbilityExecution {
 	bool failure = false;
-	PlayerAbilityExecutionFailureReason failure_reason = PLAYERABILITYEXECUTIONFAILUREREASON_NOFAILURE;
+	PlayerAbilityExecutionFailureReason failure_reason = PlayerAbilityExecutionFailureReason::NO_FAILURE;
 	ActionEffect effect_on_caster;
 	ActionEffect effect_on_target;
 };
@@ -44,7 +44,7 @@ class SlashPlayerAbility : public PlayerAbility {
 		// check that the caster has enough stamina
 		if (caster.stamina() < 4) {
 			effect.failure = true;
-			effect.failure_reason = PLAYERABILITYEXECUTIONFAILUREREASON_NOTENOUGHSTAMINA;
+			effect.failure_reason = PlayerAbilityExecutionFailureReason::NOT_ENOUGH_STAMINA;
 			return effect;
 		}
 
@@ -56,7 +56,7 @@ class SlashPlayerAbility : public PlayerAbility {
 
 	std::string message(const PlayerAbilityExecution& execution, bool caster_is_you) const {
 		if (execution.failure) {
-			if (execution.failure_reason == PLAYERABILITYEXECUTIONFAILUREREASON_NOTENOUGHSTAMINA) {
+			if (execution.failure_reason == PlayerAbilityExecutionFailureReason::NOT_ENOUGH_STAMINA) {
 				return caster_is_you ? "Ability_Slash_NoStamina_You"
 				                     : "Ability_Slash_NoStamina_Opponent";
 			}
@@ -64,7 +64,7 @@ class SlashPlayerAbility : public PlayerAbility {
 			return caster_is_you ? "Ability_Slash_Execute_You" : "Ability_Slash_Execute_Opponent";
 		}
 
-		assert("fail" && false);
+		return "unknown";
 	}
 };
 
@@ -82,7 +82,7 @@ class DefendPlayerAbility : public PlayerAbility {
 		// check that the caster has enough stamina
 		if (caster.stamina() < 2) {
 			effect.failure = true;
-			effect.failure_reason = PLAYERABILITYEXECUTIONFAILUREREASON_NOTENOUGHSTAMINA;
+			effect.failure_reason = PlayerAbilityExecutionFailureReason::NOT_ENOUGH_STAMINA;
 			return effect;
 		}
 
@@ -94,7 +94,7 @@ class DefendPlayerAbility : public PlayerAbility {
 
 	std::string message(const PlayerAbilityExecution& execution, bool caster_is_you) const {
 		if (execution.failure) {
-			if (execution.failure_reason == PLAYERABILITYEXECUTIONFAILUREREASON_NOTENOUGHSTAMINA) {
+			if (execution.failure_reason == PlayerAbilityExecutionFailureReason::NOT_ENOUGH_STAMINA) {
 				return caster_is_you ? "Ability_Defend_NoStamina_You"
 				                     : "Ability_Defend_NoStamina_Opponent";
 			}
@@ -102,7 +102,7 @@ class DefendPlayerAbility : public PlayerAbility {
 			return caster_is_you ? "Ability_Defend_Execute_You" : "Ability_Defend_Execute_Opponent";
 		}
 
-		assert("fail" && false);
+		return "unknown";
 	}
 };
 
